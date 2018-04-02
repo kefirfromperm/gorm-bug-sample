@@ -6,5 +6,5 @@ import grails.gorm.services.Service
 @Service(Book)
 interface BookService {
     @Query("update ${Book book} set ${book.title} = $title where ${book.id} = $id")
-    void update(long id, String title)
+    void update(Long id, String title)
 }
