@@ -1,18 +1,26 @@
 package gorm.bug.sample
 
-import grails.testing.services.ServiceUnitTest
-import spock.lang.Specification
+import grails.test.hibernate.HibernateSpec
 
-class BookServiceSpec extends Specification implements ServiceUnitTest<BookService>{
+class BookServiceSpec extends HibernateSpec {
 
-    def setup() {
+    BookService bookService = hibernateDatastore.getService(BookService)
+
+    @Override
+    List<Class> getDomainClasses() {
+        return super.getDomainClasses() + [Book]
     }
 
-    def cleanup() {
-    }
 
-    void "test something"() {
-        expect:"fix me"
-            true == false
+    void "test @Query update"() {
+        given:
+        Book book = new Book(title: "Walking the himalayas").save(flush: true)
+
+        when:
+        bookService.update(book.id, "Walking the Himalayas")
+        hibernateSession.clear()
+
+        then:
+        Book.get(1).title == "Walking the Himalayas"
     }
 }
